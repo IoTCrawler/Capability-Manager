@@ -27,6 +27,7 @@ WORKDIR /opt/API-CM
 COPY API-CM.py config.cfg CapabilityGenerator.jar ./
 COPY config ./config
 COPY local_dependencies ./local_dependencies
+COPY certs ./certs
 
 # application's default port
 EXPOSE 3030

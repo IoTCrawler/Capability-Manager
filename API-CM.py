@@ -7,7 +7,6 @@ import json
 import configparser
 from subprocess import Popen, PIPE
 import html
-import ssl
 
 #Obtain configuracion from config.cfg file.
 cfg = configparser.ConfigParser()  
@@ -78,7 +77,7 @@ def obtainRequestHeaders(RequestHeaders):
 
 def generateToken(subject, action, device, resource):
 
-    validation = False
+    #validation = False
 
     outTypeProcessed = ""
 
@@ -86,12 +85,21 @@ def generateToken(subject, action, device, resource):
 
     try:
 
-        #Validating token
+        #logging.info("subject: " +str(subject))
+        #logging.info("action: " +str(action))
+        #logging.info("device: " +str(device))
+        #logging.info("resource: " +str(resource))
+
+
+        #Validating token : 
+        #Observation: str(resource).replace("&",";") --> for PDP error: "The reference to entity "***" must end with the ';' delimiter.""
         codeType, outType = getstatusoutput(["java","-jar","CapabilityGenerator.jar",
             str(subject),
             str(action),
             str(device),
-            str(resource)])
+            str(resource).replace("&",";")
+            ])
+        
         #logging.info("subject: " +str(subject))
         #logging.info("action: " +str(action))
         #logging.info("device: " +str(device))
@@ -210,36 +218,69 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
                     logging.info("Keyrock Token info response : " + str(bodyJSON))
 
-                    suValue = bodyJSON["User"]["username"]
+                    validToken = bodyJSON["valid"]
 
-                    logging.info("Step 2) Generating capability token to:\n" +
-                    "{\n" + 
-                    "\t\tsu: " + suValue + ",\n" +
-                    "\t\tde: " + deValue + ",\n" +
-                    "\t\tac: " + acValue + ",\n" +
-                    "\t\tre: " + reValue + "\n" +
-                    "}")
+                    userEnabled = bodyJSON["User"]["enabled"]
 
-                    cmToken = generateToken(suValue, acValue, deValue, reValue)
+                    if (validToken == False or userEnabled == False):
+                        logging.info("Obtaining Keyrock Token info response : Error.")
+                        
+                        #self.send_response(500)
+                        #self.end_headers()
+                        #
+                        #if(validToken == False):
+                        #    self.wfile.write(json.dumps("Invalid token.").encode())
+                        #else
+                        #    self.wfile.write(json.dumps("User disabled.").encode())
 
-                    # We send back the response to the client
-
-                    if 'error' not in cmToken:
-                        logging.info("Generating capability token response : NEW CAPABILITY TOKEN : " + str(cmToken))
-                        self.send_response(200)
+                        self.send_response(401)
                         self.end_headers()
-                        self.wfile.write(json.dumps(cmToken).encode())
+                        
+                        message = {"error": { "message": "Invalid email or password", "code": 401, "title": "Unauthorized" } }
+
+                        if(validToken == False):
+                            message["error"]["message"] =  "Invalid token."
+                        
+                        logging.info(str(message))
+
+                        self.wfile.write(json.dumps(message).encode())
+
                     else:
-                        logging.info("Generating capability token response : Error.")
-                        self.send_response(500)
-                        self.end_headers()
-                        self.wfile.write(json.dumps("Can't generate capability token").encode())
+
+                        suValue = bodyJSON["User"]["username"]
+
+                        logging.info("Step 2) Generating capability token to:\n" +
+                        "{\n" + 
+                        "\t\tsu: " + suValue + ",\n" +
+                        "\t\tde: " + deValue + ",\n" +
+                        "\t\tac: " + acValue + ",\n" +
+                        "\t\tre: " + reValue + "\n" +
+                        "}")
+
+                        cmToken = generateToken(suValue, acValue, deValue, reValue)
+
+                        # We send back the response to the client
+                        if 'error' not in cmToken:
+                            logging.info("Generating capability token response : NEW CAPABILITY TOKEN : " + str(cmToken))
+                            self.send_response(200)
+                            self.end_headers()
+                            self.wfile.write(json.dumps(cmToken).encode())
+                        else:
+                            logging.info("Generating capability token response : Error.")
+                            self.send_response(500)
+                            self.end_headers()
+                            self.wfile.write(json.dumps("Can't generate capability token").encode())
 
                     self.close_connection
                 else:
-                    self.send_response(500)
+                    logging.info("Obtaining Keyrock Token info response : Error.")
+                    logging.info(json.loads(data.decode('utf8').replace("'", '"')))
+
+                    #self.send_response(500)
+                    self.send_response(status)
                     self.end_headers()
-                    self.wfile.write(json.dumps("Keyrock Token info response : Token info not found.").encode())
+                    #self.wfile.write(json.dumps("Keyrock Token info response : Token info not found.").encode())
+                    self.wfile.write(data)
                     self.close_connection
                 
         except Exception as e:
@@ -260,5 +301,9 @@ logging.basicConfig(
 
 httpd = HTTPServer( (host, port), SimpleHTTPRequestHandler )
 
+httpd.socket = ssl.wrap_socket (httpd.socket,
+        keyfile="certs/server-priv-rsa.pem",
+        certfile='certs/server-public-cert.pem',
+        server_side = True)
 
 httpd.serve_forever()
