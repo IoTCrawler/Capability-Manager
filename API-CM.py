@@ -8,6 +8,8 @@ import configparser
 from subprocess import Popen, PIPE
 import html
 
+import time
+
 #Obtain configuracion from config.cfg file.
 cfg = configparser.ConfigParser()  
 cfg.read(["./config.cfg"])  
@@ -18,11 +20,22 @@ keyrock_protocol = cfg.get("GENERAL", "keyrock_protocol")
 keyrock_host = cfg.get("GENERAL", "keyrock_host")
 keyrock_port = cfg.get("GENERAL", "keyrock_port")
 
+logginKPI = cfg.get("GENERAL", "logginKPI")
+
 gcontext = ssl.SSLContext()
 
 def getstatusoutput(command):
+
+    milli_secGenCT=int(round(time.time() * 1000))
+
     process = Popen(command, stdout=PIPE,stderr=PIPE)
     out, err = process.communicate()
+
+    milli_secGenCT2=int(round(time.time() * 1000))
+
+
+    if(logginKPI.upper()=="Y".upper()):
+        logging.info("Total(ms) CT Generator: " + str(milli_secGenCT2 - milli_secGenCT))
 
     #print("out")
     #print(out)
@@ -90,7 +103,6 @@ def generateToken(subject, action, device, resource):
         #logging.info("device: " +str(device))
         #logging.info("resource: " +str(resource))
 
-
         #Validating token : 
         #Observation: str(resource).replace("&",";") --> for PDP error: "The reference to entity "***" must end with the ';' delimiter.""
         codeType, outType = getstatusoutput(["java","-jar","CapabilityGenerator.jar",
@@ -99,7 +111,6 @@ def generateToken(subject, action, device, resource):
             str(device),
             str(resource).replace("&",";")
             ])
-        
         #logging.info("subject: " +str(subject))
         #logging.info("action: " +str(action))
         #logging.info("device: " +str(device))

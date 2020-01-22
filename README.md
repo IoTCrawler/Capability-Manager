@@ -44,6 +44,10 @@ vi config.cfg
     - keyrock_host=Keyrock host.
     - keyrock_port=Keyrock port.
 
+- Params to log KPIs info
+
+    - logginKPI=Admitted values: "Y","N"
+
 # Configuration docker-compose.yml file
 
 We need to define the PDP endpoint, review PDP_URL and PDP_port environment variables.

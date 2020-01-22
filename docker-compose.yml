@@ -12,5 +12,5 @@ services:
         - "3030:3030"
     restart: unless-stopped
     environment:
-        - PDP_URL=155.54.99.118
+        - PDP_URL=155.54.95.170
         - PDP_port=8080
