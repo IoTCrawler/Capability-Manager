@@ -1,0 +1,17 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+service:
+  externalPort: 3030
+  internalPort: 3030
+
+livenessProbe:
+  path: "/"
+  initialDelaySeconds: 14
+  timeoutSeconds: 14
+  scheme: "HTTP"
+readinessProbe:
+  path: "/"
+  initialDelaySeconds: 4
+  timeoutSeconds: 2
+  scheme: "HTTP"
