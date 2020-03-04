@@ -29,6 +29,13 @@ COPY config ./config
 COPY local_dependencies ./local_dependencies
 COPY certs ./certs
 
+#KeyRock endpoint
+ENV keyrock_protocol=https
+ENV keyrock_host=keyrock
+ENV keyrock_port=443
+ENV PDP_URL=pdphost
+ENV PDP_port=8080
+
 # application's default port
 EXPOSE 3030
 

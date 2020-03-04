@@ -12,5 +12,9 @@ services:
         - "3030:3030"
     restart: unless-stopped
     environment:
+        - keyrock_protocol=https
+        - keyrock_host=155.54.95.170
+        - keyrock_port=443
+
         - PDP_URL=155.54.95.170
         - PDP_port=8080

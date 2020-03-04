@@ -7,6 +7,7 @@ import json
 import configparser
 from subprocess import Popen, PIPE
 import html
+import os
 
 import time
 
@@ -16,9 +17,13 @@ cfg.read(["./config.cfg"])
 host = cfg.get("GENERAL", "host")
 port = int(cfg.get("GENERAL", "port"))
 
-keyrock_protocol = cfg.get("GENERAL", "keyrock_protocol")
-keyrock_host = cfg.get("GENERAL", "keyrock_host")
-keyrock_port = cfg.get("GENERAL", "keyrock_port")
+#keyrock_protocol = cfg.get("GENERAL", "keyrock_protocol")
+#keyrock_host = cfg.get("GENERAL", "keyrock_host")
+#keyrock_port = cfg.get("GENERAL", "keyrock_port")
+
+keyrock_protocol = str(os.getenv('keyrock_protocol'))
+keyrock_host = str(os.getenv('keyrock_host'))
+keyrock_port = int(os.getenv('keyrock_port'))
 
 logginKPI = cfg.get("GENERAL", "logginKPI")
 
@@ -300,6 +305,10 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             SimpleHTTPRequestHandler.do_HandleError(self,"POST")
     
     def do_GET(self):
+
+        logging.info(str(keyrock_protocol))
+        logging.info(str(keyrock_host))
+        logging.info(str(keyrock_port))
 
         self.send_response(200)
         self.end_headers()
