@@ -1,3 +1,7 @@
+# License
+
+Indexing Project source code files are made avaialable under the Apache License, Version 2.0 (Apache-2.0), located into the LICENSE file.
+
 # Introduction
 
 This project is a WEB SERVICE for Capability Manager  (CM-WBS) that allows a POST request and return a Capability token.

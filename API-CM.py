@@ -1,3 +1,9 @@
+#
+#Copyright Odin Solutions S.L. All Rights Reserved.
+#
+#SPDX-License-Identifier: Apache-2.0
+#
+
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import ssl
 import http.client
