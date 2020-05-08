@@ -54,7 +54,7 @@ vi config.cfg
 
 # Configuration docker-compose.yml file
 
-We need to define the PDP endpoint, review PDP_URL and PDP_port environment variables.
+We need to define the PDP endpoint, review PDP_URL environment variable.
 
 # Prerequisites
 

@@ -22,5 +22,5 @@ services:
         - keyrock_host=<specify IdM Public IP address>
         - keyrock_port=443
 
-        - PDP_URL=<specify XACML-PDP Public IP address>
-        - PDP_port=8080
+        # PDP_URL format: https://<XACML-PDP-IP>:<XACML-PDP-PORT><XACML-PDP-SERVICE>
+        - PDP_URL=<specify XACML-PDP Public address (including service)>

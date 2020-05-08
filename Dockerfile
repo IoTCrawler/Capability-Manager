@@ -39,8 +39,7 @@ COPY certs ./certs
 ENV keyrock_protocol=https
 ENV keyrock_host=keyrock
 ENV keyrock_port=443
-ENV PDP_URL=pdphost
-ENV PDP_port=8080
+ENV PDP_URL=https://pdphost:8080/XACMLServletPDP/
 
 # application's default port
 EXPOSE 3030

@@ -30,6 +30,7 @@ port = int(cfg.get("GENERAL", "port"))
 keyrock_protocol = str(os.getenv('keyrock_protocol'))
 keyrock_host = str(os.getenv('keyrock_host'))
 keyrock_port = int(os.getenv('keyrock_port'))
+pdp_url = str(os.getenv('PDP_URL'))
 
 logginKPI = cfg.get("GENERAL", "logginKPI")
 
@@ -113,6 +114,7 @@ def generateToken(subject, action, device, resource):
         #logging.info("action: " +str(action))
         #logging.info("device: " +str(device))
         #logging.info("resource: " +str(resource))
+        #logging.info("pdp: " +str(pdp_url))
 
         #Validating token : 
         #Observation: str(resource).replace("&",";") --> for PDP error: "The reference to entity "***" must end with the ';' delimiter.""
@@ -120,7 +122,8 @@ def generateToken(subject, action, device, resource):
             str(subject),
             str(action),
             str(device),
-            str(resource).replace("&",";")
+            str(resource).replace("&",";"),
+            str(pdp_url)
             ])
         #logging.info("subject: " +str(subject))
         #logging.info("action: " +str(action))
@@ -138,13 +141,28 @@ def generateToken(subject, action, device, resource):
         #logging.info(outTypeProcessed)
         #logging.info(type(outTypeProcessed))
 
-        if(outTypeProcessed["code"]=="ok"):
-            cmToken = outTypeProcessed["capabilityToken"]
-        else:
+        #if(outTypeProcessed["code"]=="ok"):
+        #    cmToken = outTypeProcessed["capabilityToken"]
+        #else:
+        #    cmToken = {"error": "error"}
+
+        if ("code" in outTypeProcessed):
+            if(outTypeProcessed["code"]=="ok"):
+                cmToken = outTypeProcessed["capabilityToken"]
+            else:
+                cmToken = {"error": "error"}
+        elif ("su"  in outTypeProcessed and "de" in outTypeProcessed):
+            if(outTypeProcessed["su"]==str(subject) and outTypeProcessed["de"]==str(device)):
+                cmToken = outTypeProcessed
+            else:
+                cmToken = {"error": "error"}  
+        else: 
             cmToken = {"error": "error"}
 
     except Exception as e:
         logging.info(e)
+
+        cmToken = {"error": "error"}
 
 #    logging.info ("validationToken - Result: " + str(validation) + " - Code: " + str(outTypeProcessed))
 
