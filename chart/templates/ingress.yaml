@@ -1,0 +1,36 @@
+{{ if .Values.ingress.enabled}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: {{ template "appname" . }}
+    track: "{{ .Values.application.track }}"
+    tier: "{{ .Values.application.tier }}"
+    release: {{ .Release.Name }}
+    service: {{ .Values.capabilityManager.service.name }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  name: {{ .Values.capabilityManager.service.name }}
+spec:
+  tls:
+  - hosts:
+    {{ if eq .Values.gitlab.env "staging" }}
+    - staging.pep-proxy.iotcrawler.eu
+    {{ else }}
+    - pep-proxy.iotcrawler.eu
+    {{ end }}
+    secretName: pep-proxy-{{ .Values.gitlab.env }}-tls
+  rules:
+  {{ if eq .Values.gitlab.env "staging" }}
+  - host: staging.pep-proxy.iotcrawler.eu
+    {{ else }}
+  - host: pep-proxy.iotcrawler.eu
+  {{ end }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: {{ .Values.capabilityManager.service.name }}
+          servicePort: {{ .Values.capabilityManager.service.internalPort }}
+{{end}}
