@@ -16,16 +16,16 @@ spec:
   tls:
   - hosts:
     {{ if eq .Values.gitlab.env "staging" }}
-    - staging.pep-proxy.iotcrawler.eu
+    - staging.capability-manager.iotcrawler.eu
     {{ else }}
-    - pep-proxy.iotcrawler.eu
+    - capability-manager.iotcrawler.eu
     {{ end }}
-    secretName: pep-proxy-{{ .Values.gitlab.env }}-tls
+    secretName: capability-manager-{{ .Values.gitlab.env }}-tls
   rules:
   {{ if eq .Values.gitlab.env "staging" }}
-  - host: staging.pep-proxy.iotcrawler.eu
+  - host: staging.capability-manager.iotcrawler.eu
     {{ else }}
-  - host: pep-proxy.iotcrawler.eu
+  - host: capability-manager.iotcrawler.eu
   {{ end }}
     http:
       paths:
