@@ -1,7 +1,3 @@
-# License
-
-Capability Manager Project source code files are made avaialable under the Apache License, Version 2.0 (Apache-2.0), located into the LICENSE file.
-
 # Introduction
 
 This project is a WEB SERVICE for Capability Manager  (CM-WBS) that allows a POST request and return a Capability token.
@@ -122,6 +118,10 @@ To create a Capability Token CM-WBS follow the next steps:
 1. Send request to Keyrock API to validate and obtain Keyrock Token info.
 
 2. Try to create a Capability token accessing to PDP component to verify the user has autorisation.
+
+# License
+
+Capability Manager Project source code files are made avaialable under the Apache License, Version 2.0 (Apache-2.0), located into the [LICENSE](LICENSE) file.
 
 
 
