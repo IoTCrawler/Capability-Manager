@@ -105,13 +105,13 @@ CM-WBS is waiting a POST request with an specific format data body.
 curl -X POST \
   https://<CM-WBS_host>:<CM-WBS_port> \
   -H 'Content-Type: application/json' \
-  -d '{"token": "f587e811-17e2-4c39-afe8-fd621d45f1e1","de": "216.57.210.163","ac": "GET","re": "/ngsi-ld/v1/entities/?type=http://example.org/room/Room"}'
+  -d '{"token": "<idmToken>","de": "<device>","ac": "<action>","re": "<resource>"}'
 ```
 
-- token: Keyrock token obtained when the user is authenticated.
-- de: IP of the device.
-- ac: Action (POST, GET, DELETE, ...).
-- re: Resource.
+- token: idmToken, Keyrock token obtained when the user is authenticated.
+- de: Device, endpoint of the resource’s request (protocol+IP+PORT).
+- ac: Action, method of the resource’s request ("POST", "GET", "PATCH"...).
+- re: Resource, path of the resource request.
 
 To create a Capability Token CM-WBS follow the next steps:
 
